@@ -3,22 +3,6 @@ import sys
 import os
 
 # --- 1. 画像ファイルの自動生成 (変更なし) ---
-def create_dummy_assets():
-    pygame.init()
-    def draw_base_player(surface):
-        pygame.draw.ellipse(surface, (255, 200, 0), (5, 5, 20, 20)) 
-        pygame.draw.circle(surface, (0, 0, 0), (10, 12), 2)
-        pygame.draw.circle(surface, (0, 0, 0), (20, 12), 2)
-        pygame.draw.rect(surface, (0, 100, 255), (5, 20, 20, 15))
-    s1 = pygame.Surface((30, 40), pygame.SRCALPHA); draw_base_player(s1)
-    pygame.draw.rect(s1, (0, 0, 0), (8, 35, 6, 5)); pygame.draw.rect(s1, (0, 0, 0), (16, 35, 6, 5))
-    pygame.image.save(s1, "player_stand.png")
-    s2 = pygame.Surface((30, 40), pygame.SRCALPHA); draw_base_player(s2)
-    pygame.draw.rect(s2, (0, 0, 0), (12, 35, 6, 5)); pygame.image.save(s2, "player_walk1.png")
-    s3 = pygame.Surface((30, 40), pygame.SRCALPHA); draw_base_player(s3)
-    pygame.draw.rect(s3, (5, 35, 6, 5), (5, 35, 6, 5)); pygame.image.save(s3, "player_walk2.png")
-
-create_dummy_assets()
 
 # --- 2. 設定 ---
 SCREEN_WIDTH, SCREEN_HEIGHT = 1024, 768
@@ -27,13 +11,19 @@ LIMIT_TIME = 60
 SKY_BLUE, BROWN, GOLD, WHITE, RED, NAVY, BLACK = (135, 206, 235), (139, 69, 19), (255, 215, 0), (255, 255, 255), (255, 50, 50), (0, 0, 128), (0, 0, 0)
 GRAVITY, PLAYER_SPEED, JUMP_POWER = 0.8, 6, -14
 
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         def load_p(name): return pygame.transform.scale(pygame.image.load(name).convert_alpha(), (45, 60))
-        self.stand_r = load_p("player_stand.png")
+        
+        # --- ここを player_1.png に修正 ---
+        self.stand_r = load_p("player_1.png") 
+        
         self.stand_l = pygame.transform.flip(self.stand_r, True, False)
-        self.walk_r = [load_p("player_walk1.png"), load_p("player_walk2.png")]
+        
+        # 歩行アニメーションは player_2 と player_3 でOK
+        self.walk_r = [load_p("player_2.png"), load_p("player_3.png")]
         self.walk_l = [pygame.transform.flip(f, True, False) for f in self.walk_r]
         self.image = self.stand_r
         self.rect = self.image.get_rect(topleft=(50, 620))
@@ -91,6 +81,7 @@ class Goal(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(x, y))
 
 def main():
+    pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Score Attack Adventure")
     clock = pygame.time.Clock()
